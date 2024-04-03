@@ -1,5 +1,5 @@
 add_library(entities
-  heros.cpp
+  heroes.cpp
   monsters.cpp
 )
 
