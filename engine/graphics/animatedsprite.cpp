@@ -2,7 +2,7 @@
 
 
 AnimatedSprite::AnimatedSprite()
-    :sprites{Sprite{}}, ticks_per_frame{1}, current_frame{0}, time{0} {}    
+    :visible{false}, sprites{Sprite{}}, ticks_per_frame{1}, current_frame{0}, time{0} {}
 
 AnimatedSprite::AnimatedSprite(const std::vector<Sprite>& sprites, int ticks_per_frame,
                                int starting_frame)
@@ -21,7 +21,7 @@ void AnimatedSprite::update() {
     }
     ++time;
     if (time >= ticks_per_frame) {
-        current_frame = (current_frame + 1) % sprites.size();
+        current_frame = (current_frame + 1) % static_cast<int>(sprites.size());
     }
 }
 
@@ -30,5 +30,5 @@ Sprite AnimatedSprite::get_sprite() const {
 }
 
 int AnimatedSprite::number_of_frames() const {
-    return sprites.size();
+    return static_cast<int>(sprites.size());
 }

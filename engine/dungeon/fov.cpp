@@ -1,7 +1,17 @@
 #include "fov.h"
-#include "dungeon.h"
 #include <cmath>
 
+int round_ties_up(double n) {
+    return std::floor(n + 0.5);
+}
+
+int round_ties_down(double n) {
+    return std::ceil(n - 0.5);
+}
+
+double to_decimal(const Fraction& fraction) {
+    return static_cast<double>(fraction.x) / fraction.y;
+}
 
 Quadrant::Quadrant(Cardinal direction, const Vec& origin)
     :direction{direction}, origin{origin} {}
@@ -46,70 +56,35 @@ Row Row::next() const {
 }
 
 
-FieldOfView::FieldOfView(const Dungeon& dungeon)
-    :dungeon{dungeon} {}
-
-std::unordered_set<Vec> FieldOfView::compute(const Vec& position) {
-    visible.clear();
-    mark_visible(position);
+std::set<Vec> FieldOfView::compute(const Vec& position,
+                                   std::function<bool(const Vec&)> opaque) {
+    is_opaque = std::move(opaque);
+    std::set<Vec> visible;
+    visible.insert(position);
 
     for (int i = 0; i < 4; ++i) {
-        quadrant = Quadrant(static_cast<Quadrant::Cardinal>(i), position);
-        auto first_row = Row{1, Fraction{-1, 1}, Fraction{1, 1}};
-        scan(first_row);
+        Quadrant quadrant{static_cast<Quadrant::Cardinal>(i), position};
+        Row first_row{1, Fraction{-1, 1}, Fraction{1, 1}};
+        scan(first_row, quadrant, visible);
     }
 
     return visible;
 }
-
-void FieldOfView::mark_visible(const Vec& position) {
-    visible.insert(position);
-}
-
-void FieldOfView::reveal(const Vec& tile) {
-    auto position = quadrant.transform(tile);
-    mark_visible(position);
-}
     
-bool FieldOfView::is_wall(std::optional<Vec> tile) {
+bool FieldOfView::is_wall(std::optional<Vec> tile, const Quadrant& quadrant) const {
     if (!tile) {
         return false;
     }
-    auto position = quadrant.transform(tile.value());
-    return dungeon.is_blocking(position);
+    Vec position = quadrant.transform(tile.value());
+    return is_opaque(position);
 }
     
-bool FieldOfView::is_floor(std::optional<Vec> tile) {
+bool FieldOfView::is_floor(std::optional<Vec> tile, const Quadrant& quadrant) const {
     if (!tile) {
         return false;
     }
-    auto position = quadrant.transform(tile.value());
-    return !dungeon.is_blocking(position);
-}
-    
-void FieldOfView::scan(Row row) {
-    std::optional<Vec> prev_tile;
-    for (const auto& tile : row.tiles()) {
-        if (is_wall(tile) || is_symmetric(row, tile)) {
-            reveal(tile);
-        }
-            
-        if (is_wall(prev_tile) && is_floor(tile)) {
-            row.start_slope = slope(tile);
-        }
-            
-        if (is_floor(prev_tile) && is_wall(tile)) {
-            Row next_row = row.next();
-            next_row.end_slope = slope(tile);
-            scan(next_row);
-        }
-
-        prev_tile = tile;
-    }
-
-    if (is_floor(prev_tile)) {
-        scan(row.next());
-    }
+    Vec position = quadrant.transform(tile.value());
+    return !is_opaque(position);
 }
 
 
@@ -126,16 +101,30 @@ bool is_symmetric(const Row& row, const Vec& tile) {
     end.x *= row.depth;
     return col >= to_decimal(start) && col <= to_decimal(end);
 }
-    
-int round_ties_up(double n) {
-    return std::floor(n + 0.5);
-}
-    
-int round_ties_down(double n) {
-    return std::ceil(n - 0.5);
-}
 
-double to_decimal(const Fraction& fraction) {
-    return static_cast<double>(fraction.x) / fraction.y;
-}
 
+void FieldOfView::scan(Row row, const Quadrant& quadrant, std::set<Vec>& visible) const {
+    std::optional<Vec> prev_tile;
+    for (Vec tile : row.tiles()) {
+        if (is_wall(tile, quadrant) || is_symmetric(row, tile)) {
+            Vec position = quadrant.transform(tile);
+            visible.insert(position);
+        }
+
+        if (is_wall(prev_tile, quadrant) && is_floor(tile, quadrant)) {
+            row.start_slope = slope(tile);
+        }
+
+        if (is_floor(prev_tile, quadrant) && is_wall(tile, quadrant)) {
+            Row next_row = row.next();
+            next_row.end_slope = slope(tile);
+            scan(next_row, quadrant, visible);
+        }
+
+        prev_tile = tile;
+    }
+
+    if (is_floor(prev_tile, quadrant)) {
+        scan(row.next(), quadrant, visible);
+    }
+}

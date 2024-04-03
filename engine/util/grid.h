@@ -13,8 +13,8 @@ public:
     Grid()
         :width{0}, height{0} {}
         
-    Grid(int width, int height, T initval=T{})
-        :width{width}, height{height}, values(width*height, initval) {
+    Grid(int width, int height, T init_val=T{})
+        :width{width}, height{height}, values(width*height, init_val) {
         if (width <= 0) {
             std::string msg{"Value width = " + std::to_string(width)};
             msg += " must be greater than 0";
@@ -45,11 +45,11 @@ public:
         return (*this)(vec.x, vec.y);
     }
 
-    bool within_bounds(int x, int y) const {
+    [[nodiscard]] bool within_bounds(int x, int y) const {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
 
-    bool within_bounds(const Vec& vec) const {
+    [[nodiscard]] bool within_bounds(const Vec& vec) const {
         return within_bounds(vec.x, vec.y);
     }
     

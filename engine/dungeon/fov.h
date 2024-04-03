@@ -1,65 +1,49 @@
 #pragma once
 
-#include "vec.h"
-
-#include <vector>
 #include <optional>
-#include <unordered_set>
+#include <set>
+#include <vector>
 
+#include "vec.h"
 
 // forward declarations
 class Dungeon;
 
-// Albert Ford's Symmetric Shadowcasting
+// Albert Ford's Symmetric Shadow-casting
 class Quadrant {
 public:
-    enum class Cardinal { North, East, South, West };
+    enum class Cardinal { North=0, East, South, West };
 
-    Quadrant() = default;
     Quadrant(Cardinal direction, const Vec& origin);
 
     // converts tile coords (row, col) to dungeon coords (x, y)
     // for the given Cardinal direction
-    Vec transform(const Vec& tile) const;
-        
+    [[nodiscard]] Vec transform(const Vec& tile) const;
+
     Cardinal direction;
     Vec origin;
 };
 
 using Fraction = Vec;
 
-    
 class Row {
 public:
     Row(int depth, const Fraction& start_slope, const Fraction& end_slope);
-    std::vector<Vec> tiles() const;
-    Row next() const;
-        
+    [[nodiscard]] std::vector<Vec> tiles() const;
+    [[nodiscard]] Row next() const;
+
     int depth;
     Fraction start_slope, end_slope;
 };
-    
+
 class FieldOfView {
 public:
-    FieldOfView(const Dungeon& dungeon);
-
-    std::unordered_set<Vec> compute(const Vec& position);
-    void mark_visible(const Vec& position);
-
-    // helper functions for dealing with current quadrant
-    void reveal(const Vec& tile);
-    bool is_wall(std::optional<Vec> tile);
-    bool is_floor(std::optional<Vec> tile);
-    void scan(Row row);
+    [[nodiscard]] std::set<Vec> compute(const Vec& position,
+                                        std::function<bool(const Vec&)> is_opaque);
 
 private:
-    const Dungeon& dungeon;
-    std::unordered_set<Vec> visible;
-    Quadrant quadrant;
+    std::function<bool(const Vec&)> is_opaque;
+    [[nodiscard]] bool is_wall(std::optional<Vec> tile, const Quadrant& quadrant) const;
+    [[nodiscard]] bool is_floor(std::optional<Vec> tile, const Quadrant& quadrant) const;
+    void scan(Row row, const Quadrant& quadrant, std::set<Vec>& visible) const;
 };
-
-Fraction slope(const Vec& tile);
-bool is_symmetric(const Row& row, const Vec& tile);
-int round_ties_up(double n);
-int round_ties_down(double n);
-double to_decimal(const Fraction& fraction);

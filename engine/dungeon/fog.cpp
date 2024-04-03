@@ -1,17 +1,23 @@
 #include "fog.h"
 #include "dungeon.h"
+#include "fov.h"
 
 Fog::Fog(double brightness_seen)
-    :brightness_seen{brightness_seen} {}    
+    :brightness_seen{brightness_seen}, position{} {}
 
 void Fog::update_visibility(Dungeon& dungeon, const Vec& new_position) {
     position = new_position;
-    for (auto& pos : visible_tiles) {
+    for (const Vec& pos : visible_tiles) {
         dungeon.tiles(pos).visible = false;
     }
-    previously_seen_tiles.merge(visible_tiles);
-    visible_tiles = dungeon.calculate_fov(position);
-    for (auto& pos : visible_tiles) {
+
+    previously_seen_tiles.insert(std::begin(visible_tiles), std::end(visible_tiles));
+
+    FieldOfView fov;
+    visible_tiles = fov.compute(new_position, [&](const Vec& pos) {
+        return dungeon.is_opaque(pos);
+    });
+    for (const Vec& pos : visible_tiles) {
         dungeon.tiles(pos).visible = true;
     }
 }

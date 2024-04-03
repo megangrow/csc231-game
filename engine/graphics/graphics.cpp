@@ -9,8 +9,8 @@
 #include <fstream>
 #include <iostream>
 
-Graphics::Graphics(const std::string& title, int width, int height)
-    :width{width}, height{height} {
+Graphics::Graphics(const std::string& title, int screen_width, int screen_height)
+    : screen_width{screen_width}, screen_height{screen_height} {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         std::string msg{"Unable to initialize SDL Video: "};
         msg += SDL_GetError();
@@ -19,7 +19,7 @@ Graphics::Graphics(const std::string& title, int width, int height)
     }
 
     window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                              width, height, 0);
+                              screen_width, screen_height, 0);
     if (!window) {
         throw std::runtime_error(SDL_GetError());
     }
@@ -48,15 +48,15 @@ Graphics::~Graphics() {
 }
 
 
-void Graphics::load_spritesheet(const std::string& filename) {
+void Graphics::load_sprite_sheet(const std::string& filename) {
     std::ifstream input{filename};
     if (!input) {
         throw std::runtime_error("Could not open filename: " + filename);
     }
     std::string image_filename;
     input >> image_filename;
-    auto i = filename.find('/');
-    std::string parent_path{filename.substr(0, i+1)};
+    std::size_t separator = filename.find('/');
+    std::string parent_path{filename.substr(0, separator + 1)};
     image_filename = parent_path + image_filename;
 
     int texture_id = get_texture_id(image_filename);
@@ -81,7 +81,7 @@ void Graphics::load_spritesheet(const std::string& filename) {
         }
     }
 
-    if (sprites.size() == 0) {
+    if (sprites.empty()) {
         throw std::runtime_error("Could not read any sprites from filename: " + filename);
     }
 }
@@ -101,18 +101,18 @@ AnimatedSprite Graphics::get_animated_sprite(const std::string& name, int ticks_
         throw std::runtime_error("Cannot find sprite: " + name);
     }
 
-    std::vector<Sprite> sprites = i->second;
+    std::vector<Sprite> sprite_series = i->second;
     if (shuffle_order) {
-        shuffle(std::begin(sprites), std::end(sprites));
+        shuffle(std::begin(sprite_series), std::end(sprite_series));
     }
         
-    if (sprites.size() > 1 && random_start) {
+    if (sprite_series.size() > 1 && random_start) {
         // choose random starting frame
-        int starting_frame = randint(0, sprites.size() - 1);
-        return AnimatedSprite{sprites, ticks_per_frame, starting_frame};
+        int starting_frame = randint(0, static_cast<int>(sprite_series.size()) - 1);
+        return AnimatedSprite{sprite_series, ticks_per_frame, starting_frame};
     }
     else {
-        return AnimatedSprite{sprites, ticks_per_frame};
+        return AnimatedSprite{sprite_series, ticks_per_frame};
     }
 }
 
@@ -162,7 +162,7 @@ int Graphics::get_texture_id(const std::string& image_filename) {
         }
         
         // register new texture
-        int texture_id = textures.size();
+        int texture_id = static_cast<int>(textures.size());
         texture_ids[image_filename] = texture_id;
         // retain ownership of texture pointer
         textures.push_back(texture);

@@ -5,9 +5,9 @@
 #include "entity.h"
 #include "graphics.h"
 
-Camera::Camera(Graphics& graphics, int tilesize, int zoom)
-    :graphics{graphics}, tilesize{tilesize}, zoom{zoom}, location{0, 0},
-     screen_center{graphics.width/2, graphics.height/2} {
+Camera::Camera(Graphics& graphics, int tile_size, int zoom)
+    :graphics{graphics}, tile_size{tile_size}, zoom{zoom}, location{0, 0},
+     screen_center{graphics.screen_width /2, graphics.screen_height /2} {
     calculate_visibility_limits();
 }
 
@@ -19,32 +19,32 @@ void Camera::render(const Vec& position, const Sprite& sprite) const {
 void Camera::render(const Dungeon& dungeon) const {
     // screen -> world
     // calculate min, max values for x, y, then only draw those
-    int xmin = std::max(0, min.x);
-    int ymin = std::max(0, min.y);
-    int xmax = std::min(max.x, dungeon.tiles.width-1);
-    int ymax = std::min(max.y, dungeon.tiles.height-1);
+    int x_min = std::max(0, min.x);
+    int y_min = std::max(0, min.y);
+    int x_max = std::min(max.x, dungeon.tiles.width-1);
+    int y_max = std::min(max.y, dungeon.tiles.height-1);
 
     // remember any doors that are in view, then draw them later on top of base tiles
     std::vector<std::pair<Vec, Sprite>> door_sprites;
     
     // draw tile base sprite
-    for (int y = ymin; y <= ymax; ++y) {
-        for (int x = xmin; x <= xmax; ++x) {
+    for (int y = y_min; y <= y_max; ++y) {
+        for (int x = x_min; x <= x_max; ++x) {
             Vec position{x, y};
             if (within_view(position)) {
                 const Tile& tile = dungeon.tiles(position);
                 render(position, tile.sprite);
                 if (tile.has_door()) {
-                    door_sprites.push_back({position, tile.door->get_sprite()});
+                    door_sprites.emplace_back(position, tile.door->get_sprite());
                 }
             }
         }
     }
 
     // draw decorations
-    for (const auto& [position, decoration] : dungeon.decorations) {
+    for (const auto& [position, doodad] : dungeon.decorations) {
         if (within_view(position)) {
-            render(position, decoration.get_sprite());
+            render(position, doodad.get_sprite());
         }
     }
 
@@ -55,7 +55,7 @@ void Camera::render(const Dungeon& dungeon) const {
 }
 
 void Camera::render(const Entities& entities) const {
-    for (std::shared_ptr<Entity> entity : entities) {
+    for (const std::shared_ptr<Entity>& entity : entities) {
         if (within_view(entity->get_position()) && entity->is_alive() && entity->is_visible()) {
             for (Sprite sprite : entity->get_sprites()) {
                 render(entity->get_position(), sprite);
@@ -66,13 +66,13 @@ void Camera::render(const Entities& entities) const {
 
 
 void Camera::render_fog(const Dungeon& dungeon) const {
-    int xmin = std::max(0, min.x);
-    int ymin = std::max(0, min.y);
-    int xmax = std::min(max.x, dungeon.tiles.width-1);
-    int ymax = std::min(max.y, dungeon.tiles.height-1);
+    int x_min = std::max(0, min.x);
+    int y_min = std::max(0, min.y);
+    int x_max = std::min(max.x, dungeon.tiles.width-1);
+    int y_max = std::min(max.y, dungeon.tiles.height-1);
         
-    for (int y = ymin; y <= ymax; ++y) {
-        for (int x = xmin; x <= xmax; ++x) {
+    for (int y = y_min; y <= y_max; ++y) {
+        for (int x = x_min; x <= x_max; ++x) {
             Vec position{x, y};
             double brightness = dungeon.fog.brightness(position);
             int alpha = std::clamp(static_cast<int>(brightness*255), 0, 255);
@@ -82,7 +82,7 @@ void Camera::render_fog(const Dungeon& dungeon) const {
 }
 
 void Camera::render_rect(const Vec& position, int red, int green, int blue, int alpha) const {
-    int scale = tilesize * zoom;
+    int scale = tile_size * zoom;
     Vec pixel = world_to_screen(position);
     // sprites are anchored at the bottom center, whereas
     // rectangle are anchored at the upper-left: shift pixel x and
@@ -93,7 +93,7 @@ void Camera::render_rect(const Vec& position, int red, int green, int blue, int 
     graphics.draw_rect(pixel, size, red, green, blue, alpha);
 }
 
-void Camera::render_healthbar(int current_health, int max_health) {
+void Camera::render_health_bar(int current_health, int max_health) {
     double percentage = current_health / static_cast<double>(max_health);
     int length = static_cast<int>(percentage*300);
     graphics.draw_rect({10, 10}, {320, 40}, 255, 255, 255, 255);
@@ -102,7 +102,7 @@ void Camera::render_healthbar(int current_health, int max_health) {
 }
 
 void Camera::add_overlay(const Vec& position, const Sprite& sprite) {
-    overlays.push_back({position, sprite});
+    overlays.emplace_back(position, sprite);
 }
 
 void Camera::render_overlays() {
@@ -119,15 +119,15 @@ void Camera::update() {
 Vec Camera::world_to_screen(const Vec& position) const {
     // World Coords (cartesian, up is positive y) -> Pixel Coords (image, down is positive y):
     // 1. Shift dungeon position by making the camera's location be the origin
-    // 2. Multiple this position by zoom and tilesize to convert to pixels
+    // 2. Multiple this position by zoom and tile_size to convert to pixels
     // 3. Shift the pixel location to the center of the screen
-    Vec pixel = zoom * tilesize * (position - location) + screen_center;
+    Vec pixel = zoom * tile_size * (position - location) + screen_center;
 
     // 4. flip y-axis
-    pixel.y = graphics.height - pixel.y;
+    pixel.y = graphics.screen_height - pixel.y;
 
     // 5. shift up by half a tile to center it
-    pixel.y += zoom * tilesize / 2;
+    pixel.y += zoom * tile_size / 2;
     return pixel;
 }
 
@@ -151,7 +151,7 @@ void Camera::zoom_out() {
 }
 
 void Camera::calculate_visibility_limits() {
-    Vec num_tiles = Vec{graphics.width, graphics.height} / (2 * zoom * tilesize) + Vec{1, 1};
+    Vec num_tiles = Vec{graphics.screen_width, graphics.screen_height} / (2 * zoom * tile_size) + Vec{1, 1};
     max = location + num_tiles;
     min = location - num_tiles;
 }

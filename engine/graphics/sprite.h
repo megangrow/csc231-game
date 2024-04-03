@@ -4,7 +4,8 @@
 
 
 // represents a 2D image in the game
-struct Sprite {
+class Sprite {
+public:
     int texture_id{-1}; // assigned automatically when requested from graphics engine
     Vec location{0, 0}; // upper left corner of sprite in image
     Vec size{0, 0};     // size (width, height) of sprite in image

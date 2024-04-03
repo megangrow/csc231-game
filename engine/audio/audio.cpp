@@ -39,7 +39,7 @@ void Audio::load_sounds(const std::string& filename) {
     if (!input) {
         throw std::runtime_error("Could not open filename: " + filename);
     }
-    auto i = filename.find('/');
+    std::size_t i = filename.find('/');
     std::string parent_path{filename.substr(0, i + 1)};
 
     std::string name, file;
@@ -58,13 +58,17 @@ void Audio::play_sound(const std::string& sound_name, bool is_background) {
     if (sound == sounds.end()) {
         throw std::runtime_error("Cannot find sound " + sound_name);
     }
-    int result{0};
+
     if (is_background) {
-        result = Mix_PlayChannel(0, sound->second, -1);
+        int result = Mix_PlayChannel(0, sound->second, -1);
+        if (result < 0) {
+            throw std::runtime_error("Background sound " + sound_name + " cannot be played.");
+        }
     } else {
-        result = Mix_PlayChannel(1, sound->second, 0);
+        int result = Mix_PlayChannel(1, sound->second, 0);
+        if (result < 0) {
+            throw std::runtime_error(sound_name + " cannot be played.");
+        }
     }
-    if (result < 0) {
-        throw std::runtime_error(sound_name + " cannot be played.");
-    }
+
 }

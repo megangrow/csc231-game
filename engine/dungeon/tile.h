@@ -10,10 +10,10 @@ class Door;
 class Tile {
 public:
     Tile();
-    bool is_wall() const;
-    bool has_door() const;
-    bool has_entity() const;
-    bool is_visible() const;
+    [[nodiscard]] bool is_wall() const;
+    [[nodiscard]] bool has_door() const;
+    [[nodiscard]] bool has_entity() const;
+    [[nodiscard]] bool is_visible() const;
     
     enum class Type { None, Floor, Wall, Door };
     

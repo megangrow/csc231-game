@@ -3,8 +3,6 @@
 #include "vec.h"
 #include "sprite.h"
 #include <vector>
-#include <unordered_map>
-#include <functional>
 
 // forward declaration
 class Graphics;
@@ -15,7 +13,7 @@ class Engine;
 
 class Camera {
 public:
-    Camera(Graphics& graphics, int tilesize, int zoom=1);
+    Camera(Graphics& graphics, int tile_size, int zoom=1);
 
     // drawing functions
     void render(const Vec& position, const Sprite& sprite) const;
@@ -23,7 +21,7 @@ public:
     void render(const Entities& entities) const;
     void render_fog(const Dungeon& dungeon) const;
     void render_rect(const Vec& position, int red, int green, int blue, int alpha) const;
-    void render_healthbar(int current_health, int max_health);
+    void render_health_bar(int current_health, int max_health);
     void add_overlay(const Vec& position, const Sprite& sprite);
     void render_overlays();
 
@@ -40,7 +38,7 @@ public:
     
 private:
     Graphics& graphics;
-    int tilesize;
+    int tile_size;
     int zoom;
     Vec location, screen_center;
 
@@ -48,7 +46,6 @@ private:
     void calculate_visibility_limits();
     [[nodiscard]] bool within_view(const Vec& position) const;
 
-    //std::vector<std::function<void()>> overlays;
     std::vector<std::pair<Vec, Sprite>> overlays;
 };
 

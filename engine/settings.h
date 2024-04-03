@@ -8,7 +8,7 @@
 // general settings for game
 class Settings {
 public:
-    Settings(std::filesystem::path filename);
+    explicit Settings(const std::filesystem::path& filename);
 
     // absolute file path of settings.txt
     std::filesystem::path path;
@@ -18,7 +18,7 @@ public:
     int screen_width, screen_height; // screen dimensions in pixels
 
     // camera parameters
-    int tilesize; // number of pixels per tile
+    int tile_size; // number of pixels per tile
     int zoom;     // zoom level of camera
 
     // dungeon parameters
@@ -27,7 +27,7 @@ public:
     
     // paths to asset files, relative to settings.txt file
     std::string tiles;
-    std::string heros;
+    std::string heroes;
     std::string monsters;
     std::string weapons;
     std::string items;

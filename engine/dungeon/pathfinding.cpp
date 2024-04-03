@@ -10,14 +10,14 @@ Path breadth_first(const Dungeon& dungeon, const Vec& start, const Vec& goal) {
     std::unordered_map<Vec, Vec> came_from = {{start, start}};
 
     while (!frontier.empty()) {
-        auto current = frontier.front();
+        Vec current = frontier.front();
         frontier.pop();
         if (current == goal) {
             break;
         }
 
-        for (auto next : dungeon.neighbors(current)) {
-            auto tile = dungeon.tiles(next);
+        for (const Vec& next : dungeon.neighbors(current)) {
+            const Tile& tile = dungeon.tiles(next);
             if (!tile.is_wall() && came_from.count(next) == 0) {
                 frontier.push(next);
                 came_from[next] = current;
@@ -29,7 +29,7 @@ Path breadth_first(const Dungeon& dungeon, const Vec& start, const Vec& goal) {
         return {};
     }
 
-    auto current = goal;
+    Vec current = goal;
     Path path;
     while (current != start) {
         path.push_back(current);

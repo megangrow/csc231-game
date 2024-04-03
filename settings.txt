@@ -1,10 +1,10 @@
 title CSC-231-Game
 screen_width 1280
 screen_height 720
-tilesize 16
+tile_size 16
 zoom 3
 tiles assets/tiles.txt
-heros assets/heros.txt
+heroes assets/heroes.txt
 monsters assets/monsters.txt
 weapons assets/weapons.txt
 items assets/items.txt

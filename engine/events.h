@@ -11,9 +11,7 @@ class Engine;
 class Events {
 public:
     // add an event to the list of events
-
-
-    void add(std::shared_ptr<Event> event);
+    void add(const std::shared_ptr<Event>& event);
     
     template <typename T, typename... Args>
     std::shared_ptr<T> create_event(Args&&... args) {
@@ -24,7 +22,7 @@ public:
 
     // update all currently running events
     void execute(Engine& engine);
-    bool empty() const;
+    [[nodiscard]] bool empty() const;
     
 private:
     std::vector<std::shared_ptr<Event>> events;

@@ -1,6 +1,9 @@
 #include "vec.h"
 #include <cmath>
 
+bool operator<(const Vec& a, const Vec& b) {
+    return (a.x < b.x) || ((a.x == b.x) && (a.y < b.y));
+}
 
 bool operator==(const Vec& a, const Vec& b) {
     return a.x == b.x && a.y == b.y;
@@ -44,6 +47,6 @@ std::ostream& operator<<(std::ostream& os, const Vec& vec) {
 }
 
 double distance(const Vec& a, const Vec& b) {
-    auto difference = a - b;
+    Vec difference = a - b;
     return std::sqrt(std::pow(difference.x, 2) + std::pow(difference.y, 2));
 }

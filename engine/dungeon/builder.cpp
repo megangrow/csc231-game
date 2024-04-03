@@ -6,8 +6,7 @@
 #include <unordered_set>
 #include <unordered_map>
 
-
-void print_layout(const Grid<int>& layout) {
+[[maybe_unused]] void print_layout(const Grid<int>& layout) {
     std::cout << '+' << std::setfill('-') << std::setw(layout.width+2) << "+\n";
     for (int y = 0; y < layout.height; ++y) {
         std::cout << '|';
@@ -26,30 +25,29 @@ void print_layout(const Grid<int>& layout) {
 }
 
 Builder::Builder(int room_placement_attempts)
-    :room_placement_attempts{room_placement_attempts}, id{0} {}
+    :room_placement_attempts{room_placement_attempts}, id{1} {}
     
 std::pair<Grid<int>, Rooms> Builder::generate(int width, int height) {
     if (width % 2 == 0 || height % 2 == 0) {
-        std::string msg{"width and height must be odd numbers: ("};
+        std::string msg{"screen_width and screen_height must be odd numbers: ("};
         msg += std::to_string(width) + ", " + std::to_string(height) + ")";
         throw std::runtime_error(msg);
     }
 
     if (width < 19 || height < 19) {
-        std::string msg{"width and height must be at least 19: ("};
+        std::string msg{"screen_width and screen_height must be at least 19: ("};
         msg += std::to_string(width) + ", " + std::to_string(height) + ")";
         throw std::runtime_error(msg);
     }
 
     // initialize values
     Grid<int> layout{width, height};
-    id = 1;
     rooms.clear();
 
     add_rooms(layout);
     create_corridors(layout);
 
-    auto connectors = reduce_connectors(find_all_connectors(layout));
+    std::vector<Vec> connectors = reduce_connectors(find_all_connectors(layout));
 
     // make all walkable tiles = 1
     for (int y = 1; y < layout.height; ++y) {
@@ -62,18 +60,18 @@ std::pair<Grid<int>, Rooms> Builder::generate(int width, int height) {
     }
 
     // make all connectors = 2
-    for (const auto& position : connectors) {
+    for (const Vec& position : connectors) {
         layout(position) = 2;
     }
 
-    remove_deadends(layout);
+    remove_dead_ends(layout);
 
     mark_surrounded_walls(layout);
 
     return {layout, rooms};
 }
 
-std::pair<Grid<int>, Rooms> Builder::test(int width, int height) {
+[[maybe_unused]] std::pair<Grid<int>, Rooms> Builder::generate_test_dungeon(int width, int height) {
     Grid<int> layout{width, height};
     for (int y = 0; y < layout.height; ++y) {
         for (int x = 0; x < layout.width; ++x) {
@@ -113,13 +111,13 @@ void Builder::add_rooms(Grid<int>& layout) {
         if (!overlap) {
             // room can be added to layout
             rooms.push_back(new_room);
-            imprint_room(layout, new_room, id);
+            imprint_room(layout, new_room);
             ++id;
         }
     }
 }
     
-Room Builder::generate_room(const Grid<int>& layout) const {
+Room Builder::generate_room(const Grid<int>& layout) {
     // calculate random room dimensions
     Vec size = Vec{1, 1} * (1 + 2*randint(1, 3));
 
@@ -140,7 +138,7 @@ Room Builder::generate_room(const Grid<int>& layout) const {
     return new_room;
 }
 
-void Builder::imprint_room(Grid<int>& layout, const Room& room, int id) const {
+void Builder::imprint_room(Grid<int>& layout, const Room& room) const {
     for (int y = 0; y < room.size.y; ++y) {
         for (int x = 0; x < room.size.x; ++x) {
             layout(x+room.position.x, y+room.position.y) = id;
@@ -174,7 +172,7 @@ void Builder::carve_corridor(Grid<int>& layout, const Vec& position,
             
         // attempt to carve corridor in each direction
         for (auto direction : directions) {
-            Vec next = position + direction*2;
+            next = position + direction*2;
             if (layout.within_bounds(next) && layout(next) == 0) {
                 layout(position + direction) = id;
                 carve_corridor(layout, next, directions);
@@ -183,7 +181,7 @@ void Builder::carve_corridor(Grid<int>& layout, const Vec& position,
     }
 }
 
-std::optional<Builder::Connector> Builder::maybe_connector(const Grid<int>& layout, const Vec& position) const {
+std::optional<Builder::Connector> Builder::maybe_connector(const Grid<int>& layout, const Vec& position) {
     if (layout(position) != 0) { // only consider walls as connectors
         return {};
     }
@@ -208,7 +206,7 @@ std::optional<Builder::Connector> Builder::maybe_connector(const Grid<int>& layo
     }
 }
  
-std::vector<Builder::Connector> Builder::find_all_connectors(const Grid<int>& layout) const {
+std::vector<Builder::Connector> Builder::find_all_connectors(const Grid<int>& layout) {
     std::vector<Connector> connectors;
     for (int y = 1; y < layout.height-1; ++y) {
         for (int x = 1; x < layout.width-1; ++x) {
@@ -222,7 +220,7 @@ std::vector<Builder::Connector> Builder::find_all_connectors(const Grid<int>& la
     return connectors;
 }
 
-std::vector<Vec> Builder::reduce_connectors(const std::vector<Connector>& connectors) const {
+std::vector<Vec> Builder::reduce_connectors(const std::vector<Connector>& connectors) {
     if (connectors.empty()) {
         return {};
     }
@@ -245,7 +243,7 @@ std::vector<Vec> Builder::reduce_connectors(const std::vector<Connector>& connec
     // 1) choose a main region to which all other regions will be connected
     // 2) while the graph has more than one region
     // 3) choose other region
-    // 4) choose choose a random connector between main and other, keep it
+    // 4) choose a random connector between main and other, keep it
     // 5) with probability, choose another connector (avoids a minimum
     //    spanning tree, we want more than one path between any two
     //    points in the layout)
@@ -292,8 +290,8 @@ std::vector<Vec> Builder::reduce_connectors(const std::vector<Connector>& connec
     return reduced_connectors;
 }
 
-void Builder::remove_deadends(Grid<int>& layout) const {
-    // remove corridors that are deadends, i.e. open tiles surrounded by 3 walls
+void Builder::remove_dead_ends(Grid<int>& layout) {
+    // remove corridors that are dead ends, i.e. open tiles surrounded by 3 walls
     bool removed{true};
     while (removed) {
         removed = false;
@@ -318,7 +316,7 @@ void Builder::remove_deadends(Grid<int>& layout) const {
     }
 }
 
-void Builder::mark_surrounded_walls(Grid<int>& layout) const {
+void Builder::mark_surrounded_walls(Grid<int>& layout) {
     // find walls that are completely surrounded by other walls
     std::vector<Vec> surrounded;
     for (int y = 0; y < layout.height; ++y) {

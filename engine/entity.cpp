@@ -54,7 +54,7 @@ Vec Entity::get_direction() const {
 bool Entity::is_visible() const {
     // an entity is visible if its tile is visible
     const Tile& tile = engine.dungeon.get_tile(position);
-    return tile.visible;
+    return tile.is_visible();
 }
 
 void Entity::take_damage(int amount) {
@@ -67,6 +67,7 @@ void Entity::take_damage(int amount) {
 
 void Entity::set_max_health(int value) {
     max_health = health = value;
+    alive = health > 0;
 }
 
 std::pair<int, int> Entity::get_health() const {

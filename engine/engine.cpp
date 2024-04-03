@@ -11,19 +11,19 @@
 
 Engine::Engine(const Settings& settings)
     :graphics{settings.title, settings.screen_width, settings.screen_height},
-     camera{graphics, settings.tilesize, settings.zoom}, running{false} {
+     camera{graphics, settings.tile_size, settings.zoom}, running{false} {
 
     // load sounds
     audio.load_sounds(settings.sounds);
     audio.play_sound("background", true);
     
     // load sprites
-    graphics.load_spritesheet(settings.tiles);
-    graphics.load_spritesheet(settings.heros);
-    graphics.load_spritesheet(settings.monsters);
-    graphics.load_spritesheet(settings.weapons);
-    graphics.load_spritesheet(settings.items);
-    graphics.load_spritesheet(settings.effects);
+    graphics.load_sprite_sheet(settings.tiles);
+    graphics.load_sprite_sheet(settings.heroes);
+    graphics.load_sprite_sheet(settings.monsters);
+    graphics.load_sprite_sheet(settings.weapons);
+    graphics.load_sprite_sheet(settings.items);
+    graphics.load_sprite_sheet(settings.effects);
     
     // create dungeon layout
     Builder builder(settings.room_placement_attempts);
@@ -41,7 +41,7 @@ void Engine::run() {
     running = true;
     Timer timer;
     double accumulated_time{0.0};
-    constexpr double timestep_per_update{0.1};
+    constexpr double time_step_per_update{0.1};
 
     // main game loop
     while (running && hero && hero->is_alive()) {
@@ -53,9 +53,9 @@ void Engine::run() {
 
         // if we have accumulated enough rendering time for an update,
         // then take it
-        while (accumulated_time >= timestep_per_update) {
+        while (accumulated_time >= time_step_per_update) {
             update();
-            accumulated_time -= timestep_per_update;
+            accumulated_time -= time_step_per_update;
         }
 
         // redraw everything on the screen
@@ -97,6 +97,14 @@ std::shared_ptr<Entity> Engine::create_monster() {
     return monster;
 }
 
+void Engine::remove_entity(Entity& entity) {
+    // remove from dungeon tile
+    Vec position = entity.get_position();
+    dungeon.remove_entity(position);
+
+    // remove from active entities by setting health to zero
+    entity.set_max_health(0);
+}
 
 
 void Engine::handle_input() {
@@ -140,11 +148,12 @@ void Engine::render() {
     graphics.clear();
     camera.render(dungeon);
     camera.render(entities);
-    camera.render_fog(dungeon);
     camera.render_overlays();
+    camera.render_fog(dungeon);
+
     if (hero) {
         auto [health, max_health] = hero->get_health();
-        camera.render_healthbar(health, max_health);
+        camera.render_health_bar(health, max_health);
     }
     graphics.redraw();
 }
