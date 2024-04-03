@@ -10,10 +10,10 @@ public:
 
     // returns name of last key that was pressed, names are capitalized: Space, Right, A, B, etc
     std::string get_last_keypress();
-    std::pair<int, int> get_last_mouse_click();
+    [[maybe_unused]] std::pair<int, int> get_last_mouse_click();
 
     // register keypress as the most recent
-    void set_last_keypress(std::string key);
+    void set_last_keypress(const std::string& key);
     
     // returns list of all input events since last call
     std::vector<std::string> get_all_input_events();

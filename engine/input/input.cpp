@@ -16,7 +16,7 @@ Input::~Input() {
     SDL_Quit();
 }
 
-void Input::set_last_keypress(std::string key) {
+void Input::set_last_keypress(const std::string& key) {
     last_keypress = key;
 }
 std::string Input::get_last_keypress() {
@@ -25,7 +25,7 @@ std::string Input::get_last_keypress() {
     return key;
 }
 
-std::pair<int, int> Input::get_last_mouse_click() {
+[[maybe_unused]] std::pair<int, int> Input::get_last_mouse_click() {
     return {mouse_x, mouse_y};
 }
 
@@ -34,7 +34,7 @@ std::vector<std::string> Input::get_all_input_events() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
-            inputs.push_back("Quit");
+            inputs.emplace_back("Quit");
         }
         else if (event.type == SDL_KEYDOWN) {
             SDL_Keycode key = event.key.keysym.sym;
@@ -43,7 +43,7 @@ std::vector<std::string> Input::get_all_input_events() {
         }
         else if (event.type == SDL_MOUSEBUTTONDOWN) {
             if (event.button.button == SDL_BUTTON_LEFT) {
-                inputs.push_back("Click");
+                inputs.emplace_back("Click");
                 mouse_x = event.motion.x;
                 mouse_y = event.motion.y;
             }
