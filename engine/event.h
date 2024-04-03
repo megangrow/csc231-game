@@ -31,7 +31,7 @@ public:
     void add_next(T&& event) {
         next_events.push_back(std::make_shared<T>(std::forward<T>(event)));
     }
-    [[maybe_unused]] void add_next(const std::shared_ptr<Event>& event) {
+    void add_next(std::shared_ptr<Event> event) {
         next_events.push_back(event);
     }
     
