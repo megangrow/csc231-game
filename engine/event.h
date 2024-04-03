@@ -31,7 +31,9 @@ public:
     void add_next(T&& event) {
         next_events.push_back(std::make_shared<T>(std::forward<T>(event)));
     }
-    [[maybe_unused]] void add_next(const std::shared_ptr<Event>& event) {
+    // ignore clang-tidy's recommendation for pass by const ref and pass by value,
+    // otherwise calling add_next(shared_ptr<Event>) matches add_next(T&& Event) (compile error)
+    void add_next(std::shared_ptr<Event> event) {
         next_events.push_back(event);
     }
     
