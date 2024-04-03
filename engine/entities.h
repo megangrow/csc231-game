@@ -10,7 +10,7 @@ class Entity;
 // manages a collection of entities
 class Entities {
 public:
-    void add(std::shared_ptr<Entity> entity);
+    void add(const std::shared_ptr<Entity>& entity);
     void update();
     bool take_turn(Engine& engine);
 
@@ -18,9 +18,9 @@ public:
 
     // for iterating over entities
     auto begin() { return std::begin(entities); }
-    auto begin() const { return std::begin(entities); }
+    [[nodiscard]] auto begin() const { return std::begin(entities); }
     auto end() { return std::end(entities); }
-    auto end() const { return std::end(entities); }
+    [[nodiscard]] auto end() const { return std::end(entities); }
 
 private:
     const int cost_of_turn{8}; // energy need for taking a turn

@@ -19,7 +19,7 @@ public:
 // base class for all actions
 class Action {
 public:
-    virtual ~Action() {}
+    virtual ~Action() = default;
 
     // override perform in a derived class
     virtual Result perform(Engine& engine, std::shared_ptr<Entity> entity) = 0;

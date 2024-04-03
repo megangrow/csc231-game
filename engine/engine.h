@@ -11,7 +11,7 @@
 
 class Engine {
 public:
-    Engine(const Settings& settings);
+    explicit Engine(const Settings& settings);
 
     // Add a hero to the game
     std::shared_ptr<Entity> create_hero();

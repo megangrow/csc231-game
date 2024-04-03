@@ -30,7 +30,7 @@ public:
     void update();
 
     // translate entity positions to pixel positions
-    Vec world_to_screen(const Vec& position) const;
+    [[nodiscard]] Vec world_to_screen(const Vec& position) const;
 
     // position camera over this position
     void move_to(const Vec& position);
@@ -46,7 +46,7 @@ private:
 
     Vec min, max; // world coordinates of min/max tiles that are visible
     void calculate_visibility_limits();
-    bool within_view(const Vec& position) const;
+    [[nodiscard]] bool within_view(const Vec& position) const;
 
     //std::vector<std::function<void()>> overlays;
     std::vector<std::pair<Vec, Sprite>> overlays;

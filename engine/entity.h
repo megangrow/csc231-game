@@ -19,11 +19,11 @@ public:
     Entity(Engine& engine, Vec position, Team team);
 
     // movement
-    Vec get_position() const;
+    [[nodiscard]] Vec get_position() const;
     void move_to(Vec position);
-    Vec get_direction() const;
-    void change_direction(Vec direction);
-    bool is_visible() const;
+    [[nodiscard]] Vec get_direction() const;
+    void change_direction(Vec new_direction);
+    [[nodiscard]] bool is_visible() const;
 
     // functions to be called after move_to is called
     std::vector<std::function<void(Engine& engine, Entity& entity)>> on_move;
@@ -31,12 +31,12 @@ public:
     // combat
     void take_damage(int amount);
     void set_max_health(int value);
-    std::pair<int, int> get_health() const; // returns health, max_health
-    bool is_alive() const;
-    void set_weapon(std::shared_ptr<Weapon> weapon);
-    std::shared_ptr<Weapon> get_weapon() const;
-    void set_team(Team team);
-    Team get_team() const;
+    [[nodiscard]] std::pair<int, int> get_health() const; // returns health, max_health
+    [[nodiscard]] bool is_alive() const;
+    void set_weapon(std::shared_ptr<Weapon> new_weapon);
+    [[nodiscard]] std::shared_ptr<Weapon> get_weapon() const;
+    void set_team(Team new_team);
+    [[nodiscard]] Team get_team() const;
 
     // taking turns
     std::unique_ptr<Action> take_turn();
@@ -45,7 +45,7 @@ public:
     // drawing
     void set_sprite(const std::string& name);
     void update();
-    std::vector<Sprite> get_sprites() const;
+    [[nodiscard]] std::vector<Sprite> get_sprites() const;
 
 private:
     Engine& engine;

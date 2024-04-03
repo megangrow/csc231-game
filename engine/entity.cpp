@@ -23,11 +23,11 @@ Entity::Entity(Engine& engine, Vec position, Team team)
     }
 }
 
-void Entity::change_direction(Vec direction) {
-    this->direction = direction;
-    if (direction.x == 1) {
+void Entity::change_direction(Vec new_direction) {
+    direction = new_direction;
+    if (new_direction.x == 1) {
         sprite.flip(false);
-    } else if (direction.x == -1) {
+    } else if (new_direction.x == -1) {
         sprite.flip(true);
     }
     adjust_weapon_position();
@@ -38,7 +38,7 @@ void Entity::move_to(Vec new_position) {
     Tile& new_tile = engine.dungeon.get_tile(new_position);
     std::swap(old_tile.entity, new_tile.entity);
     position = new_position;
-    for (auto func : on_move) {
+    for (const auto& func : on_move) {
         func(engine, *this);
     }
 }
@@ -77,19 +77,19 @@ bool Entity::is_alive() const {
     return alive;
 }
 
-void Entity::set_weapon(std::shared_ptr<Weapon> weapon) {
-    this->weapon = weapon;
-    this->weapon->sprite = engine.graphics.get_sprite(this->weapon->name);
+void Entity::set_weapon(std::shared_ptr<Weapon> new_weapon) {
+    weapon = std::move(new_weapon);
+    weapon->sprite = engine.graphics.get_sprite(weapon->name);
     adjust_weapon_position();
-    this->weapon->sprite.center = {this->weapon->sprite.size.x / 2, this->weapon->sprite.size.y};
+    weapon->sprite.center = {weapon->sprite.size.x / 2, weapon->sprite.size.y};
 }
 
 std::shared_ptr<Weapon> Entity::get_weapon() const {
     return weapon;
 }
 
-void Entity::set_team(Team team) {
-    this->team = team;
+void Entity::set_team(Team new_team) {
+    team = new_team;
 }
 
 Team Entity::get_team() const {

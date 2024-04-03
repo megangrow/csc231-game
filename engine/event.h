@@ -11,15 +11,15 @@ class Engine;
 // more turns. Useful for animations, enemies taking damage, etc.
 class Event {
 public:
-    Event(int number_of_frames=1); // how many frames it should last
-    virtual ~Event() {}
+    explicit Event(int number_of_frames=1); // how many frames it should last
+    virtual ~Event() = default;
 
     //Event(Event&& other);
     
     void update();
 
     // returns whether event has finished
-    virtual bool is_done() const;
+    [[nodiscard]] virtual bool is_done() const;
 
     // what the event does per update frame
     virtual void execute(Engine& engine) = 0;
@@ -33,7 +33,7 @@ public:
     void add_next(T&& event) {
         next_events.push_back(std::make_shared<T>(std::forward<T>(event)));
     }
-    void add_next(std::shared_ptr<Event> event) {
+    void add_next(const std::shared_ptr<Event>& event) {
         next_events.push_back(event);
     }
     

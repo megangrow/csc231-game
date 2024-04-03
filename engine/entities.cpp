@@ -3,13 +3,13 @@
 #include "action.h"
 #include "entity.h"
 
-void Entities::add(std::shared_ptr<Entity> entity) {
+void Entities::add(const std::shared_ptr<Entity>& entity) {
     entities.push_back(entity); 
 }
 
 void Entities::update() {
     // tell all entities to update
-    for (std::shared_ptr<Entity> entity : entities) {
+    for (const std::shared_ptr<Entity>& entity : entities) {
         entity->update();
     }
 }
@@ -69,5 +69,5 @@ void Entities::advance() {
 }
 
 void Entities::remove_dead_entities() {
-    std::erase_if(entities, [](std::shared_ptr<Entity> entity) { return !entity->alive; });
+    std::erase_if(entities, [](const std::shared_ptr<Entity>& entity) { return !entity->alive; });
 }

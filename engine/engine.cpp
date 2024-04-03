@@ -1,9 +1,7 @@
 #include "engine.h"
 
 #include <fstream>
-#include <iomanip>
 #include <sstream>
-#include <unordered_map>
 
 #include "builder.h"
 #include "decorator.h"
@@ -79,14 +77,14 @@ std::shared_ptr<Entity> Engine::create_hero() {
         engine.camera.move_to(entity.get_position());
     };
     center_camera(*this, *hero);
-    hero->on_move.push_back(center_camera);
+    hero->on_move.emplace_back(center_camera);
 
     // update the visibility of tiles and enemies
     auto update_visibility = [](Engine& engine, Entity& entity) {
         engine.dungeon.update_visibility(entity.get_position());
     };
     update_visibility(*this, *hero);
-    hero->on_move.push_back(update_visibility);
+    hero->on_move.emplace_back(update_visibility);
 
     return hero;
 }
@@ -102,8 +100,8 @@ std::shared_ptr<Entity> Engine::create_monster() {
 
 
 void Engine::handle_input() {
-    std::vector<std::string> events = input.get_all_input_events();
-    for (const std::string& event : events) {
+    std::vector<std::string> input_events = input.get_all_input_events();
+    for (const std::string& event : input_events) {
         if (event == "Quit") { // game window was closed
             stop();
             break;
