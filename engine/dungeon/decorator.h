@@ -21,7 +21,7 @@ private:
     const Graphics& graphics;
     std::vector<Room> rooms;
     Grid<Tile> tiles;
-    std::unordered_map<Vec, AnimatedSprite> doodads;
+    std::unordered_map<Vec, AnimatedSprite> decorations;
         
     void set_tile_type(const Grid<int>& layout, int x, int y);
     void set_tile_sprites();

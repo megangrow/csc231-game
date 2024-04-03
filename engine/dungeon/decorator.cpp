@@ -30,7 +30,7 @@ Dungeon Decorator::create_dungeon() {
         }
     }
 
-    return Dungeon{tiles, rooms, doodads};
+    return Dungeon{tiles, rooms, decorations};
 }
 
 void Decorator::set_tile_type(const Grid<int>& layout, int x, int y) {
@@ -177,13 +177,13 @@ void Decorator::place_destroyed_wall() {
     tiles(x, y).type = Tile::Type::Floor;
     tiles(x, y).walkable = true;
 
-    // remove any surrounding doodads
-    doodads.erase({x-1, y});
-    doodads.erase({x+1, y});
+    // remove any surrounding decorations
+    decorations.erase({x-1, y});
+    decorations.erase({x+1, y});
 
-    doodads[{x-1, y}] = graphics.get_animated_sprite({"wall_destroyed_left"}, 1);
-    doodads[{x, y}] = graphics.get_animated_sprite({"wall_destroyed_center"}, 1);
-    doodads[{x+1, y}] = graphics.get_animated_sprite({"wall_destroyed_right"}, 1);
+    decorations[{x-1, y}] = graphics.get_animated_sprite({"wall_destroyed_left"}, 1);
+    decorations[{x, y}] = graphics.get_animated_sprite({"wall_destroyed_center"}, 1);
+    decorations[{x+1, y}] = graphics.get_animated_sprite({"wall_destroyed_right"}, 1);
 }
 
 void Decorator::place_torches() {
@@ -210,7 +210,7 @@ void Decorator::place_torches() {
     bool randomize{true};
     for (auto& position : positions) {
         if (probability(50)) {
-            doodads[position] = graphics.get_animated_sprite(sprite_name, ticks_per_frame, randomize, randomize);
+            decorations[position] = graphics.get_animated_sprite(sprite_name, ticks_per_frame, randomize, randomize);
             
         }
     }

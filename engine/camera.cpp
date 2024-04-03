@@ -41,10 +41,10 @@ void Camera::render(const Dungeon& dungeon) const {
         }
     }
 
-    // draw doodads
-    for (const auto& [position, doodad] : dungeon.doodads) {
+    // draw decorations
+    for (const auto& [position, decoration] : dungeon.decorations) {
         if (within_view(position)) {
-            render(position, doodad.get_sprite());
+            render(position, decoration.get_sprite());
         }
     }
 
