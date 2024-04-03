@@ -11,7 +11,9 @@ public:
     void open();
     void close();
     const Sprite& get_sprite() const;
-        
+
+    const Tile& get_tile() const;
+    
 private:
     Tile& tile;
     bool open_status;
