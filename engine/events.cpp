@@ -15,7 +15,9 @@ void Events::execute(Engine& engine) {
     std::vector<std::shared_ptr<Event>> next_events;
     
     // process all current events
-    for (const std::shared_ptr<Event>& event : events) {
+    // keep as pass by value, segfaults rarely happen
+    // when iterating by const ref
+    for (std::shared_ptr<Event> event : events) {
         event->execute(engine);
         event->update();
         if (event->is_done()) {
