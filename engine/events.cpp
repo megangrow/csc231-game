@@ -15,7 +15,7 @@ void Events::execute(Engine& engine) {
     std::vector<std::shared_ptr<Event>> next_events;
     
     // process all current events
-    for (std::shared_ptr<Event> event : events) {
+    for (const std::shared_ptr<Event>& event : events) {
         event->execute(engine);
         event->update();
         if (event->is_done()) {
