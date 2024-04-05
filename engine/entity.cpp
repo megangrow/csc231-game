@@ -119,6 +119,7 @@ void Entity::select_item(int index) {
     // ensure valid index within inventory
     if (0 <= index && index < max_inventory) {
         current_item = index;
+        adjust_item_position();
     }
 }
 
