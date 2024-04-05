@@ -9,13 +9,13 @@ add_subdirectory(audio)
 add_library(engine
   action.cpp
   entity.cpp
+  item.cpp
   entities.cpp
   camera.cpp
   engine.cpp
   event.cpp
   events.cpp
   settings.cpp
-  weapon.cpp
 )
 
 target_include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

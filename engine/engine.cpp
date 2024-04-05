@@ -21,7 +21,6 @@ Engine::Engine(const Settings& settings)
     graphics.load_sprite_sheet(settings.tiles);
     graphics.load_sprite_sheet(settings.heroes);
     graphics.load_sprite_sheet(settings.monsters);
-    graphics.load_sprite_sheet(settings.weapons);
     graphics.load_sprite_sheet(settings.items);
     graphics.load_sprite_sheet(settings.effects);
     
@@ -154,6 +153,8 @@ void Engine::render() {
     if (hero) {
         auto [health, max_health] = hero->get_health();
         camera.render_health_bar(health, max_health);
+        auto [selected, names] = hero->get_inventory_list();
+        camera.render_items(selected, names);
     }
     graphics.redraw();
 }

@@ -28,7 +28,6 @@ void Settings::load() {
     load("tiles", tiles);
     load("heroes", heroes);
     load("monsters", monsters);
-    load("weapons", weapons);
     load("items", items);
     load("effects", effects);
     load("sounds", sounds);

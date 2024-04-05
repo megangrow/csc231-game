@@ -6,7 +6,6 @@ zoom 3
 tiles assets/tiles.txt
 heroes assets/heroes.txt
 monsters assets/monsters.txt
-weapons assets/weapons.txt
 items assets/items.txt
 effects assets/effects.txt
 sounds assets/sounds.txt

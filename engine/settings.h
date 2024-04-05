@@ -29,7 +29,6 @@ public:
     std::string tiles;
     std::string heroes;
     std::string monsters;
-    std::string weapons;
     std::string items;
     std::string effects;
     std::string sounds;
