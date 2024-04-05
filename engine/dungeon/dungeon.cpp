@@ -21,7 +21,8 @@ Vec Dungeon::random_open_room_tile() const {
         Room room = random_choice(rooms);
         int x = randint(room.position.x, room.position.x+room.size.x-1);
         int y = randint(room.position.y, room.position.y+room.size.y-1);
-        if (tiles(x, y).walkable && tiles(x, y).entity == nullptr) {
+        const Tile& tile = tiles(x, y);
+        if (tile.walkable && tile.entity == nullptr && tile.item == nullptr) {
             return {x, y};
         }
     }
