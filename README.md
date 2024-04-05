@@ -13,7 +13,6 @@ The engine by itself does nothing, but by creating concrete types for
 Heros, Monsters, Weapons, and Actions, you will be able to write a fun
 game rather quickly.
 
-
 ## Building
 The game engine is written in C++ and uses features from the C++20
 standard. [CMake](https://cmake.org/) is used to build all components.
@@ -84,5 +83,3 @@ The dungeon was designed by and can be purchased from
 
 The heros, monsters, weapons, and items were created by and can be
 purchased from [Robert(0x72)](https://0x72.itch.io/dungeontileset-ii).
-
-
