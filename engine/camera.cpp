@@ -101,6 +101,32 @@ void Camera::render_health_bar(int current_health, int max_health) {
     graphics.draw_rect({20, 20}, {length, 20}, 50, 255, 50, 255);
 }
 
+void Camera::render_items(int selected_item, const std::vector<std::string>& sprite_names) {
+    constexpr Vec size{54, 54}, gap{5, 5};
+    for (std::size_t i = 0; i < sprite_names.size(); ++i) {
+        int x = graphics.screen_width - (size.x + gap.x) * (max_inventory - i) - gap.x;
+        int y = 10;
+        Vec corner{x, y};
+        // draw border, then background, then item sprite
+        if (i == selected_item) {
+            // red border indicates that item is currently selected
+            graphics.draw_rect(corner, size, 255, 0, 0, 255);
+        }
+        else {
+            // white border for all other items
+            graphics.draw_rect(corner, size, 255, 255, 255, 255);
+        }
+        // a black background improves sprite visibility
+        graphics.draw_rect(corner+gap, size-2*gap, 150, 150, 150, 255);
+
+        if (!sprite_names.at(i).empty()) {
+            Sprite sprite = graphics.get_sprite(sprite_names.at(i));
+            Vec position = {corner.x + size.x/2, corner.y + size.y - 2*gap.y + 2};
+            graphics.draw_sprite(position, sprite);
+        }
+    }
+}
+
 void Camera::add_overlay(const Vec& position, const Sprite& sprite) {
     overlays.emplace_back(position, sprite);
 }
