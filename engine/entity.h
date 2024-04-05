@@ -4,13 +4,14 @@
 #include "vec.h"
 #include "sprite.h"
 #include <memory>
+#include <vector>
 
 // forward declarations
 class Engine;
 class Action;
-class Weapon;
+class Item;
 
-constexpr int default_speed{8};
+constexpr int default_speed{8}, max_inventory{5};
 enum class Team { Hero, Monster };
 
 // base class for all interacting beings
@@ -33,10 +34,17 @@ public:
     void set_max_health(int value);
     [[nodiscard]] std::pair<int, int> get_health() const; // returns health, max_health
     [[nodiscard]] bool is_alive() const;
-    void set_weapon(std::shared_ptr<Weapon> new_weapon);
-    [[nodiscard]] std::shared_ptr<Weapon> get_weapon() const;
     void set_team(Team new_team);
     [[nodiscard]] Team get_team() const;
+
+    // managing items within the inventory
+    [[nodiscard]] bool is_inventory_full() const;
+    void add_to_inventory(std::shared_ptr<Item> item);
+    [[nodiscard]] std::shared_ptr<Item> get_current_item() const;
+    void select_item(int index);
+    std::shared_ptr<Item> remove_item(int index);
+    // returns selected item number and names of all items in inventory
+    [[nodiscard]] std::pair<int, std::vector<std::string>> get_inventory_list() const;
 
     // taking turns
     std::unique_ptr<Action> take_turn();
@@ -63,9 +71,12 @@ private:
     // it can take a turn
     int speed{default_speed}, energy{0};
 
-    void adjust_weapon_position();
-    
-    std::shared_ptr<Weapon> weapon;
+    // inventory stores up to max_inventory items
+    std::vector<std::shared_ptr<Item>> inventory;
+    int current_item; // item that entity is currently holding and using
+    // visually orient the item based on entity's direction
+    void adjust_item_position();
+
     friend class Entities;
 };
 

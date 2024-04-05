@@ -22,6 +22,7 @@ public:
     void render_fog(const Dungeon& dungeon) const;
     void render_rect(const Vec& position, int red, int green, int blue, int alpha) const;
     void render_health_bar(int current_health, int max_health);
+    void render_items(int selected_item, const std::vector<std::string>& sprite_names);
     void add_overlay(const Vec& position, const Sprite& sprite);
     void render_overlays();
 

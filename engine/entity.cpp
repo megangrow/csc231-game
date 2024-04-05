@@ -4,14 +4,15 @@
 
 #include "action.h"
 #include "engine.h"
-#include "weapon.h"
+#include "item.h"
 
 Entity::Entity(Engine& engine, Vec position, Team team)
     : engine{engine},
       position{position},
       team{team},
-      weapon{std::make_shared<Weapon>()} {
-    
+      inventory(max_inventory),
+      current_item{0}{
+
     // place entity onto its dungeon tile
     Tile& tile = engine.dungeon.get_tile(position);
     if (tile.entity == nullptr) {
@@ -30,7 +31,7 @@ void Entity::change_direction(Vec new_direction) {
     } else if (new_direction.x == -1) {
         sprite.flip(true);
     }
-    adjust_weapon_position();
+    adjust_item_position();
 }
 
 void Entity::move_to(Vec new_position) {
@@ -78,23 +79,72 @@ bool Entity::is_alive() const {
     return alive;
 }
 
-void Entity::set_weapon(std::shared_ptr<Weapon> new_weapon) {
-    weapon = std::move(new_weapon);
-    weapon->sprite = engine.graphics.get_sprite(weapon->name);
-    adjust_weapon_position();
-    weapon->sprite.center = {weapon->sprite.size.x / 2, weapon->sprite.size.y};
-}
-
-std::shared_ptr<Weapon> Entity::get_weapon() const {
-    return weapon;
-}
-
 void Entity::set_team(Team new_team) {
     team = new_team;
 }
 
 Team Entity::get_team() const {
     return team;
+}
+
+bool Entity::is_inventory_full() const {
+    auto empty_slots = std::count(std::begin(inventory), std::end(inventory), nullptr);
+    return empty_slots == 0;
+}
+
+void Entity::add_to_inventory(std::shared_ptr<Item> item) {
+    auto it = std::find(std::begin(inventory), std::end(inventory), nullptr);
+    if (it != inventory.end()) { // empty slot found
+        item->sprite = engine.graphics.get_sprite(item->name);
+        // visually adjust weapon to be tilted
+        item->sprite.center = {item->sprite.size.x / 2, item->sprite.size.y};
+        item->sprite.flip = false;
+        item->sprite.shift.x = sprite.get_sprite().size.x / 8;
+        item->sprite.angle = 20;
+        *it = std::move(item);
+    }
+}
+
+std::shared_ptr<Item> Entity::get_current_item() const {
+    std::shared_ptr<Item> item = inventory.at(current_item);
+    if (item) {
+        return item;
+    }
+    else {  // return empty item
+        return std::make_shared<Item>("none");
+    }
+}
+
+void Entity::select_item(int index) {
+    // ensure valid index within inventory
+    if (0 <= index && index < max_inventory) {
+        current_item = index;
+        adjust_item_position();
+    }
+}
+
+std::shared_ptr<Item> Entity::remove_item(int index) {
+    if (0 <= index && index < max_inventory) {
+        std::shared_ptr<Item> item = std::move(inventory.at(index));
+        inventory.at(index) = nullptr;
+        return item;
+    }
+    else {
+        return nullptr;
+    }
+}
+
+std::pair<int, std::vector<std::string>> Entity::get_inventory_list() const {
+    std::vector<std::string> names;
+    for (const std::shared_ptr<Item>& item : inventory) {
+        if (item) {
+            names.push_back(item->name);
+        }
+        else {
+            names.emplace_back("");
+        }
+    }
+    return {current_item, names};
 }
 
 std::unique_ptr<Action> Entity::take_turn() {
@@ -113,19 +163,28 @@ void Entity::update() {
 }
 
 std::vector<Sprite> Entity::get_sprites() const {
-    auto s = sprite.get_sprite();
-    return {weapon->sprite, s};
-}
-
-
-void Entity::adjust_weapon_position() {
-    if (direction.x == 1) {
-        weapon->sprite.flip = false;
-        weapon->sprite.shift.x = sprite.get_sprite().size.x/8;
-        weapon->sprite.angle = 20;
-    } else if (direction.x == -1) {
-        weapon->sprite.flip = true;
-        weapon->sprite.shift.x = -sprite.get_sprite().size.x/2;
-        weapon->sprite.angle = -20;
+    std::shared_ptr<Item> item = get_current_item();
+    if (item) {
+        return {item->sprite, sprite.get_sprite()};
+    }
+    else {
+        return {sprite.get_sprite()};
     }
 }
+
+
+void Entity::adjust_item_position() {
+    std::shared_ptr<Item> item = get_current_item();
+    if (item) {
+        if (direction.x == 1) {
+            item->sprite.flip = false;
+            item->sprite.shift.x = sprite.get_sprite().size.x / 8;
+            item->sprite.angle = 20;
+        } else if (direction.x == -1) {
+            item->sprite.flip = true;
+            item->sprite.shift.x = -sprite.get_sprite().size.x / 2;
+            item->sprite.angle = -20;
+        }
+    }
+}
+
