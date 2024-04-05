@@ -35,7 +35,7 @@ public:
 // over
 Result success();
 
-// return failure() if the action cannot be performed and you'd like
+// return failure() if the action cannot be performed, and you'd like
 // the entity to have another turn
 Result failure();
 
