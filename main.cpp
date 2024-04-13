@@ -9,7 +9,7 @@ int main() {
         Engine engine{settings};
 
         std::shared_ptr<Entity> hero = engine.create_hero();
-
+        Heroes::make_wizard(hero);
         engine.run();
     }
     catch (std::exception& e) {

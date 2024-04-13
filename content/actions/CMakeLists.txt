@@ -1,5 +1,6 @@
 add_library(actions
-  rest.cpp
+        rest.cpp
+        move.cpp
 )
 
 target_include_directories(actions PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
