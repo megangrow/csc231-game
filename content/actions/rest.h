@@ -1,3 +1,4 @@
+#pragma once
 #include "action.h"
 
 class Rest : public Action {

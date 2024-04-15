@@ -16,8 +16,18 @@ namespace Heroes {
         std::string key = engine.input.get_last_keypress();
         if (key == "R") {
             return std::make_unique<Rest>();
-        } else if (key == "W") {
-            return std::make_unique<Move>();
+        }
+        if (key == "W") {
+            return std::make_unique<Move>(Vec{0, 1});
+        }
+        if (key == "A") {
+            return std::make_unique<Move>(Vec{-1, 0});
+        }
+        if (key == "S") {
+            return std::make_unique<Move>(Vec{0, -1});
+        }
+        if (key == "D") {
+            return std::make_unique<Move>(Vec{1, 0});
         }
         return nullptr;
     }
