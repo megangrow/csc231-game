@@ -4,4 +4,8 @@
 
 namespace Monsters {
     void make_ogre(std::shared_ptr<Entity>& monster);
+    void make_orc_masked(std::shared_ptr<Entity>& monster);
+    void make_skeleton(std::shared_ptr<Entity>& monster);
+    void make_zombie_small(std::shared_ptr<Entity>& monster);
+    std::unique_ptr<Action> behavior(Engine&, Entity&);
 }

@@ -3,6 +3,8 @@
 #include "engine.h"
 #include "rest.h"
 #include "move.h"
+#include "closedoor.h"
+#include "opendoor.h"
 
 namespace Heroes {
     void make_wizard(std::shared_ptr<Entity>& hero) {
@@ -10,8 +12,6 @@ namespace Heroes {
         hero->set_max_health(10);
         hero->behavior = behavior;
     }
-
-
     std::unique_ptr<Action> behavior(Engine& engine, Entity&) {
         std::string key = engine.input.get_last_keypress();
         if (key == "R") {
@@ -28,6 +28,9 @@ namespace Heroes {
         }
         if (key == "D") {
             return std::make_unique<Move>(Vec{1, 0});
+        }
+        if (key == "C") {
+            return std::make_unique<CloseDoor>();
         }
         return nullptr;
     }
