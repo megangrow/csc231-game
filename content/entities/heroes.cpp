@@ -4,16 +4,24 @@
 #include "rest.h"
 #include "move.h"
 #include "closedoor.h"
-#include "opendoor.h"
+#include "staff_red.h"
+#include "entity.h"
+#include "sword.h"
 
 namespace Heroes {
     void make_wizard(std::shared_ptr<Entity>& hero) {
         hero->set_sprite("wizard");
         hero->set_max_health(10);
+        hero->add_to_inventory(std::make_shared<StaffRed>(3));
+        hero->add_to_inventory(std::make_shared<Sword>(5));
         hero->behavior = behavior;
     }
-    std::unique_ptr<Action> behavior(Engine& engine, Entity&) {
+    std::unique_ptr<Action> behavior(Engine& engine, Entity& entity) {
         std::string key = engine.input.get_last_keypress();
+        if (!key.empty() && std::isdigit(key.at(0))) {
+          int item_num = std::stoi(key) - 1;
+          entity.select_item(item_num);
+        }
         if (key == "R") {
             return std::make_unique<Rest>();
         }

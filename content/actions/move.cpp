@@ -6,6 +6,7 @@
 #include "engine.h"
 #include "opendoor.h"
 #include "updatefov.h"
+#include "attack.h"
 
 Move::Move(Vec direction)
     : direction{direction} {}
@@ -23,7 +24,12 @@ Result Move::perform(Engine& engine, std::shared_ptr<Entity> entity) {
         return failure();
     }
     if (tile.has_entity()) {
-        return alternative(Rest{});
+        if (entity->get_team() != tile.entity->get_team()) {
+          return alternative(Attack(*tile.entity));
+        }
+        else {
+          return alternative(Rest{});
+        }
     }
     entity->move_to(position);
     return success();
