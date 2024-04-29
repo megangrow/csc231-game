@@ -9,30 +9,45 @@
 #include "wander.h"
 #include "sword.h"
 #include "axe.h"
+#include "staff_red.h"
+#include "staff_green.h"
 
 namespace Monsters {
     void make_ogre(std::shared_ptr<Entity>& monster) {
         monster->set_sprite("ogre");
         monster->set_max_health(10);
-        monster->add_to_inventory(std::make_shared<Axe>(7));
+        monster->add_to_inventory(std::make_shared<Axe>(5));
         monster->behavior = aggressive_behavior;
 
     }
     void make_orc_masked(std::shared_ptr<Entity>& monster) {
         monster->set_sprite("orc_masked");
-        monster->set_max_health(12);
-        monster->add_to_inventory(std::make_shared<Sword>(5));
+        monster->set_max_health(8);
+        monster->add_to_inventory(std::make_shared<Sword>(4));
         monster->behavior = aggressive_behavior;
     }
     void make_skeleton(std::shared_ptr<Entity>& monster) {
       monster->set_sprite("skeleton");
-      monster->set_max_health(20);
+      monster->set_max_health(5);
       monster->behavior = passive_behavior;
     }
     void make_zombie_small(std::shared_ptr<Entity>& monster) {
       monster->set_sprite("zombie_small");
-      monster->set_max_health(10);
+      monster->set_max_health(5);
       monster->behavior = aggressive_behavior;
+    }
+    void make_demon_big(std::shared_ptr<Entity>& monster) {
+      monster-> set_sprite("demon_big");
+      monster->set_max_health(10);
+      monster->add_to_inventory(std::make_shared<StaffGreen>(6));
+      monster->behavior = aggressive_behavior;
+    }
+
+    void make_necromancer(std::shared_ptr<Entity>& monster) {
+      monster-> set_sprite("necromancer");
+      monster->set_max_health(15);
+      monster->behavior = aggressive_behavior;
+      monster->add_to_inventory(std::make_shared<StaffRed>(5));
     }
 
     std::unique_ptr<Action> aggressive_behavior(Engine& engine, Entity& entity) {

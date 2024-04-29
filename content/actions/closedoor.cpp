@@ -1,6 +1,7 @@
 #include "closedoor.h"
 #include "entity.h"
 #include "updatefov.h"
+#include "sound.h"
 
 Result CloseDoor::perform(Engine& engine, std::shared_ptr<Entity> entity) {
     Vec position = entity->get_position();
@@ -10,6 +11,7 @@ Result CloseDoor::perform(Engine& engine, std::shared_ptr<Entity> entity) {
         Tile& tile = engine.dungeon.get_tile(neighbor);
         if (tile.has_door() && tile.door->is_open()) {
             tile.door->close();
+            std::make_shared<Sound>("door-close");
             closed_any_doors = true;
         }
     }
