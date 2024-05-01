@@ -1,6 +1,7 @@
 #include "entity.h"
 
 #include <sstream>
+#include <algorithm>
 
 #include "action.h"
 #include "engine.h"

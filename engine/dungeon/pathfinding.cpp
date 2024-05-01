@@ -3,6 +3,7 @@
 
 #include <queue>
 #include <unordered_map>
+#include <algorithm>
 
 Path breadth_first(const Dungeon& dungeon, const Vec& start, const Vec& goal) {
     std::queue<Vec> frontier;

@@ -1,5 +1,7 @@
 #include "camera.h"
 
+#include <algorithm>
+
 #include "dungeon.h"
 #include "entities.h"
 #include "entity.h"

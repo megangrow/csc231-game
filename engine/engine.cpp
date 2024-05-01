@@ -34,6 +34,7 @@ Engine::Engine(const Settings& settings)
 }
 
 void Engine::run() {
+  // add win condition
     if (!hero) {
         throw std::runtime_error("Engine::run(): No hero has been added to the game");
     }
@@ -60,6 +61,7 @@ void Engine::run() {
         // redraw everything on the screen
         render();
     }
+    // WIN CONDITION
 }
 
 void Engine::stop() {

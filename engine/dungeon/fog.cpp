@@ -2,6 +2,8 @@
 #include "dungeon.h"
 #include "fov.h"
 
+#include <algorithm>
+
 Fog::Fog(double brightness_seen)
     :brightness_seen{brightness_seen}, position{} {}
 
