@@ -9,6 +9,7 @@ namespace Monsters {
     void make_zombie_small(std::shared_ptr<Entity>& monster);
     void make_demon_big(std::shared_ptr<Entity>& monster);
     void make_necromancer(std::shared_ptr<Entity>& monster);
+    void make_muddy(std::shared_ptr<Entity>& monster);
     std::unique_ptr<Action> aggressive_behavior(Engine&, Entity&);
     std::unique_ptr<Action> passive_behavior(Engine&, Entity&);
 }

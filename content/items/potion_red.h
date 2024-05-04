@@ -5,8 +5,8 @@
 
 class RedPotion : public Item {
 public:
-  explicit RedPotion(int damage); // heals 2 health
-  void use(Engine& engine, Entity&, Entity& defender) override;
+  explicit RedPotion(int damage);
+  virtual void use(Engine& engine, Entity& owner) override;
 private:
   int damage;
 };

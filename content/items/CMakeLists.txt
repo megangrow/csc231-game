@@ -6,6 +6,8 @@ add_library(items
         potion_red.cpp
         staff_green.cpp
         staff_green.h
+        coin.cpp
+        coin.h
 )
 
 target_include_directories(items PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

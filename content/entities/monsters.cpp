@@ -11,6 +11,8 @@
 #include "axe.h"
 #include "staff_red.h"
 #include "staff_green.h"
+#include "potion_red.h"
+#include "coin.h"
 
 namespace Monsters {
     void make_ogre(std::shared_ptr<Entity>& monster) {
@@ -30,6 +32,7 @@ namespace Monsters {
       monster->set_sprite("skeleton");
       monster->set_max_health(5);
       monster->behavior = passive_behavior;
+      monster->add_to_inventory(std::make_shared<Coin>(0));
     }
     void make_zombie_small(std::shared_ptr<Entity>& monster) {
       monster->set_sprite("zombie_small");
@@ -47,7 +50,15 @@ namespace Monsters {
       monster-> set_sprite("necromancer");
       monster->set_max_health(15);
       monster->behavior = aggressive_behavior;
-      monster->add_to_inventory(std::make_shared<StaffRed>(5));
+      monster->add_to_inventory(std::make_shared<StaffRed>(6));
+    }
+
+    void make_muddy(std::shared_ptr<Entity>& monster) {
+      monster->set_sprite("muddy");
+      monster->set_max_health(10);
+      monster->add_to_inventory(std::make_shared<RedPotion>(-20));
+      monster->behavior = aggressive_behavior;
+
     }
 
     std::unique_ptr<Action> aggressive_behavior(Engine& engine, Entity& entity) {

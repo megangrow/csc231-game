@@ -1,12 +1,13 @@
 #include "potion_red.h"
 #include "engine.h"
-#include "hit.h"
-#include "thrust.h"
 #include "entity.h"
+#include "heal.h"
 
 RedPotion::RedPotion(int damage) //heals 2
-    : Item{"potion_red"}, damage{damage} {}
+    : Item{"potion_red"}, damage{damage} {
+}
 
-void RedPotion::use(Engine& engine, Entity& attacker, Entity&) {
-  engine.events.create_event<Hit>(attacker, damage);
+void RedPotion::use(Engine& engine, Entity& owner) {
+  engine.events.create_event<Heal>(owner, -20);
+  owner.remove_item(this);
 }

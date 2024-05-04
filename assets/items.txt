@@ -37,3 +37,5 @@ potion_large_yellow 336 224 16 16
 heart_full 288 256 16 16
 heart_half 304 256 16 16
 heart_empty 320 256 16 16
+
+coin 288 272 8 16

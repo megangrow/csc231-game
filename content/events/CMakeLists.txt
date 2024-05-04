@@ -7,6 +7,9 @@ add_library(events
         animation.cpp
         sound.cpp
         conjure.cpp
+        drop.cpp
+        heal.cpp
+
 )
 
 target_include_directories(events PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

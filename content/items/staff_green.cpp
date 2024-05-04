@@ -4,7 +4,6 @@
 #include "entity.h"
 #include "hit.h"
 #include "swing.h"
-#include "animation.h"
 
 StaffGreen::StaffGreen(int damage)
     : Item{"staff_green"}, damage{damage} {}

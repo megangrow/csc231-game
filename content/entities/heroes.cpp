@@ -1,23 +1,22 @@
 #include "heroes.h"
 #include "action.h"
-#include "engine.h"
-#include "rest.h"
-#include "move.h"
 #include "closedoor.h"
-#include "staff_red.h"
+#include "engine.h"
 #include "entity.h"
-#include "sword.h"
+#include "heal.h"
+#include "move.h"
 #include "potion_red.h"
+#include "rest.h"
 #include "staff_green.h"
+#include "staff_red.h"
+#include "sword.h"
+#include "drop.h"
 
 namespace Heroes {
     void make_wizard(std::shared_ptr<Entity>& hero) {
         hero->set_sprite("wizard");
         hero->set_max_health(25);
         hero->add_to_inventory(std::make_shared<Sword>(4));
-        hero->add_to_inventory(std::make_shared<StaffGreen>(5));
-        hero->add_to_inventory(std::make_shared<StaffRed>(10));
-        hero->add_to_inventory(std::make_shared<RedPotion>(-2));
         hero->behavior = behavior;
     }
     std::unique_ptr<Action> behavior(Engine& engine, Entity& entity) {
@@ -27,7 +26,8 @@ namespace Heroes {
           entity.select_item(item_num);
         }
         if (key == "U" && entity.get_current_item()->name == "potion_red") {
-            entity.take_damage(-5);
+          entity.get_current_item()->use(engine, entity);
+          return nullptr;
         }
         if (key == "R") {
             return std::make_unique<Rest>();

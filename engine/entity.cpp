@@ -189,3 +189,14 @@ void Entity::adjust_item_position() {
     }
 }
 
+void Entity::remove_item(Item* item) {
+  auto it = std::find_if(std::begin(inventory), std::end(inventory),
+                         [=](std::shared_ptr<Item>& i) {
+                           return item == i.get();
+                         });
+
+  if (it != inventory.end()) { // found the item
+    *it = nullptr;
+  }
+}
+

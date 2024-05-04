@@ -25,13 +25,15 @@ int main() {
           std::shared_ptr<Entity> monster3 = engine.create_monster();
           Monsters::make_orc_masked(monster3);
         }
-        for (int i = 0; i < 7; ++i) {
+        for (int i = 0; i < 15; ++i) {
           std::shared_ptr<Entity> monster4 = engine.create_monster();
           Monsters::make_skeleton(monster4);
         }
         for (int i = 0; i < 5; ++i) {
           std::shared_ptr<Entity> monster6 = engine.create_monster();
           Monsters::make_zombie_small(monster6);
+          std::shared_ptr<Entity> monster7 = engine.create_monster();
+          Monsters::make_muddy(monster7);
         }
 
 

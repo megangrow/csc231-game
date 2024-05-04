@@ -24,6 +24,7 @@ public:
     void move_to(Vec position);
     [[nodiscard]] Vec get_direction() const;
     void change_direction(Vec new_direction);
+    void remove_item(Item* item);
     [[nodiscard]] bool is_visible() const;
 
     // functions to be called after move_to is called
