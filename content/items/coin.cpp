@@ -5,4 +5,5 @@
 
 Coin::Coin(int damage)
     : Item{"coin"}, damage{damage} {
+  // Creates coin objects
 }

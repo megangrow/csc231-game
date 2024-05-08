@@ -9,8 +9,11 @@ int main() {
         Settings settings{"settings.txt"};
         Engine engine{settings};
 
+        // Create hero character
         std::shared_ptr<Entity> hero = engine.create_hero();
         Heroes::make_wizard(hero);
+
+        // Create monsters
 
         std::shared_ptr<Entity> monster = engine.create_monster();
         Monsters::make_ogre(monster);

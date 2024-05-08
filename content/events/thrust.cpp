@@ -5,7 +5,7 @@ constexpr int delta = 3; // pixels per frame
 
 Thrust::Thrust(Sprite& sprite, Vec direction)
       :Event{duration}, sprite{sprite}, copy{sprite}, direction(direction) {
-    // orient the weapon towards
+    // Orients the weapon
     sprite.center = sprite.size / 2;
     sprite.shift.y -= sprite.size.y / 4;
 
@@ -29,10 +29,12 @@ Thrust::Thrust(Sprite& sprite, Vec direction)
 }
 
 void Thrust::execute(Engine&) {
-  //shift in pixels (16 per tile)
+  // Shift in pixels (16 per tile)
+  // Moves weapon forward
   sprite.shift += direction * delta;
 }
 
 void Thrust::when_done(Engine&) {
+  // Resets to initial position (retract thrust)
   sprite = copy;
 }

@@ -25,6 +25,8 @@ namespace Heroes {
           int item_num = std::stoi(key) - 1;
           entity.select_item(item_num);
         }
+        // Addition for final!
+        // Allows hero to use potions when holding them
         if (key == "U" && entity.get_current_item()->name == "potion_red") {
           entity.get_current_item()->use(engine, entity);
           return nullptr;

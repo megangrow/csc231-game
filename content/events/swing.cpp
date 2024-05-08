@@ -1,11 +1,14 @@
 #include "swing.h"
 #include <cmath>
 
+// Animation code provided by Dr. Brown
+
 constexpr int duration = 3;
 
 Swing::Swing(Sprite& sprite, Vec direction)
     :Event{duration}, sprite{sprite}, copy{sprite}, starting_angle{sprite.angle} {
-    if (direction == Vec{1, 0}) {
+  // Based on direction, set starting angle
+  if (direction == Vec{1, 0}) {
         starting_angle = 0;
         delta = 135.0 / (duration - 1);
     }
@@ -28,10 +31,12 @@ Swing::Swing(Sprite& sprite, Vec direction)
 }
 
 void Swing::execute(Engine&) {
+  // Performs swinging animation
     sprite.angle = starting_angle + delta * frame_count;
 }
 
 void Swing::when_done(Engine&) {
+  // Resets sprite to initial position
     sprite = copy;
 }
 

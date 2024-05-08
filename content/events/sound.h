@@ -6,7 +6,6 @@
 class Sound : public Event {
 public:
   explicit Sound(std::string name);
-
   void execute(Engine& engine) override;
 
 private:

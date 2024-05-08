@@ -9,7 +9,7 @@ class Entity;
 class Swing : public Event {
 public:
     Swing(Sprite& sprite, Vec direction);
-
+    // Weapon movement
     void execute(Engine& engine) override;
     void when_done(Engine& engine) override;
     

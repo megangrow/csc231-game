@@ -4,6 +4,8 @@
 #include "vec.h"
 #include "animatedsprite.h"
 
+// Basic class for all animations used
+
 class Animation : public Event {
 public:
   explicit Animation(std::string name, Vec position);

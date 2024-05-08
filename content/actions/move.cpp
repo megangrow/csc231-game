@@ -31,9 +31,14 @@ Result Move::perform(Engine& engine, std::shared_ptr<Entity> entity) {
           return alternative(Attack(*tile.entity));
         }
         else {
+          // This is here so entities don't attack their teammates
           return alternative(Rest{});
         }
     }
+
+    // Addition for final! Win condition:
+    // If the coin is picked up, it increments the counter
+    // If the counter reaches 10, game closes and print to terminal "YOU WIN"
     if (tile.has_item()) {
       if (tile.item->name == "coin") {
         ++coin_counter;
@@ -42,10 +47,11 @@ Result Move::perform(Engine& engine, std::shared_ptr<Entity> entity) {
           engine.stop();
         }
       }
+      // If the item isn't a coin, add to inventory as usual
       if (tile.item->name != "coin") {
         entity->add_to_inventory(tile.item);
       }
-      tile.item.reset();
+      tile.item.reset(); // Erases the item from the tile once picked up
       engine.camera.update();
     }
     entity->move_to(position);

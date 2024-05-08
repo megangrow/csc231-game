@@ -9,5 +9,7 @@ Die::Die(Entity& entity)
 
 void Die::execute(Engine& engine) {
   engine.remove_entity(entity);
+  // Addition for final!
+  // Upon death, all entities drop their current item
   engine.events.create_event<Drop>(entity, engine.dungeon.get_tile(entity.get_position()), entity.get_current_item());
 }

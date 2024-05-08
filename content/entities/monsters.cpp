@@ -60,7 +60,9 @@ namespace Monsters {
       monster->behavior = aggressive_behavior;
 
     }
-
+    // Monsters can be aggressive or passive
+    // Aggressive monsters will pursue the hero if in sight
+    // If aggressive, they can attack and pick up weapons
     std::unique_ptr<Action> aggressive_behavior(Engine& engine, Entity& entity) {
       // pursue Hero if monster can see him (If Hero sees me, I see him)
       if (entity.is_visible() && engine.hero) {
@@ -78,8 +80,8 @@ namespace Monsters {
       return std::make_unique<Rest>();
     }
 
+    // Passive monsters just wander around to be a nuisance, they don't pursue hero
     std::unique_ptr<Action> passive_behavior(Engine&, Entity&) {
-      // Passive monsters just wander around to be a nuisance, they don't pursue hero
       if (probability(66)) {
         return std::make_unique<Wander>();
       }

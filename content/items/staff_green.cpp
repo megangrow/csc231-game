@@ -8,9 +8,9 @@
 StaffGreen::StaffGreen(int damage)
     : Item{"staff_green"}, damage{damage} {}
 
+// Classic item: swing movement with fire animation on defender
 void StaffGreen::use(Engine& engine, Entity& attacker, Entity& defender) {
   Vec direction = defender.get_position() - attacker.get_position();
-
   auto swing = engine.events.create_event<Swing>(sprite, direction);
   std::shared_ptr<Event> fire = std::make_shared<Animation>("fire", defender.get_position());
   fire->add_next(Hit{defender, damage});

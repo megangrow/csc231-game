@@ -7,7 +7,7 @@
 class Thrust : public Event {
 public:
   Thrust(Sprite& sprite, Vec direction);
-
+  // Weapon movement
   void execute(Engine& engine) override; //sprite.shift += (dx, dy)
   void when_done(Engine& engine) override; //reset
 
